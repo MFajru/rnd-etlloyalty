@@ -1,4 +1,4 @@
-package rnd.etlloyalty.entity;
+package rnd.etlloyalty.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
