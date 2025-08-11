@@ -6,9 +6,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cc_transaction")
+//@Table(name = "RND_CC_TRX")
 public class CcTransaction {
     @Id
-    private String approval_code;
+    private String approvalCode;
 
     private String tranCode;
     private String tranCodeDesc;
@@ -26,12 +27,12 @@ public class CcTransaction {
     private String merchantId;
     private String merchantCat;
 
-    public String getApproval_code() {
-        return approval_code;
+    public String getApprovalCode() {
+        return approvalCode;
     }
 
-    public void setApproval_code(String approval_code) {
-        this.approval_code = approval_code;
+    public void setApprovalCode(String approval_code) {
+        this.approvalCode = approval_code;
     }
 
     public String getTranCode() {

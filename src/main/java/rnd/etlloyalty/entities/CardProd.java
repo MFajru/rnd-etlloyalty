@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "crdlnk_cardprod")
+//@Table(name = "RND_CRDLNK_CARDPROD")
 public class CardProd {
     @Id
     private Long id;

@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "crdlnk_oadc575")
+//@Table(name = "RND_ODS_CRDLNK_OADC575")
+
 public class Oadc575Record {
     @Id
     @Column(name = "TERMINAL_ID")

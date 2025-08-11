@@ -9,6 +9,8 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "crdlnk_cpcus")
+//@Table(name = "RND_CRDLNK_CPCUS")
+
 public class CpcusRecord {
     @Id
     @Column(name = "CR_ACCT_NBR")

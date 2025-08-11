@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "crdlnk_mismer")
+//@Table(name = "RND_CRDLNK_MISMER")
+
 public class MismerRecord {
     @Id
     @Column(name = "MERCHANT_ID")

@@ -2,6 +2,7 @@ package rnd.etlloyalty.services;
 
 import org.springframework.stereotype.Service;
 import rnd.etlloyalty.entities.BccthstRecord;
+import rnd.etlloyalty.entities.CcTransaction;
 import rnd.etlloyalty.interfaces.IEtlTransaction;
 import rnd.etlloyalty.repositories.BccthstRepository;
 
@@ -26,7 +27,23 @@ public class EtlTransactionService implements IEtlTransaction {
         // tinggal mikir gimana caranya function ini selalu jalan pas ada data baru masuk
         List<BccthstRecord> records = bccthstRepository.findAll();
         for (BccthstRecord record: records) {
-//            record
+            CcTransaction ccTransaction = new CcTransaction();
+            ccTransaction.setApprovalCode(record.getApprovalCode());
+            ccTransaction.setCardNumber(record.getCardNbr());
+            ccTransaction.setCardOrg(record.getOrgNbr());
+            ccTransaction.setCardType(record.getType());
+            ccTransaction.setMerchantCat(record.getMerchCat());
+            ccTransaction.setMerchantId(null); // join dengan oaslog, get merchant id
+            ccTransaction.setMerchantOrg(null); // join dengan oaslog, get merchant id
+            ccTransaction.setChannel(null); //liat notes untuk dapetin channel
+            ccTransaction.setTerminalCode(null); // liat di oadc575
+            ccTransaction.setTranAmount(ccTransaction.getTranAmount());
+            ccTransaction.setTranCode(record.getTranCode());
+            ccTransaction.setTranCodeDesc(null); // custom sendiri, liat di excel
+            ccTransaction.setTranFeature(null); // liat notes untuk buat sendiri
+            ccTransaction.setTranDate(record.getTranDate());
+            ccTransaction.setUtilCode(null); // liat BNLOG dan note untuk tau cara ambilnya
+            ccTransaction.setCountryCode(null); // join dengan oaslog
         }
         return bccthstRepository.findAll();
     }

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "crdlnk_cpcrd")
+//@Table(name = "RND_CRDLNK_CPCRD")
 public class CpcrdRecord {
     @Id
     @Column(name = "CM_CARD_NMBR")
