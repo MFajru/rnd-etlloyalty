@@ -5,6 +5,7 @@ import rnd.etlloyalty.entities.BccthstRecord;
 import rnd.etlloyalty.entities.CcTransaction;
 import rnd.etlloyalty.interfaces.IEtlTransaction;
 import rnd.etlloyalty.repositories.BccthstRepository;
+import rnd.etlloyalty.repositories.OaslogRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public class EtlTransactionService implements IEtlTransaction {
 
     private  final BccthstRepository bccthstRepository;
+    private final OaslogRepository oaslogRepository;
 
-    public EtlTransactionService(BccthstRepository bccthstRepository) {
+    public EtlTransactionService(BccthstRepository bccthstRepository, OaslogRepository oaslogRepository) {
         this.bccthstRepository = bccthstRepository;
+        this.oaslogRepository = oaslogRepository;
     }
 
 
@@ -25,7 +28,7 @@ public class EtlTransactionService implements IEtlTransaction {
         // mapping ke model cc transaction
         // insert ke db
         // tinggal mikir gimana caranya function ini selalu jalan pas ada data baru masuk
-        List<BccthstRecord> records = bccthstRepository.findAll();
+        List<BccthstRecord> records = bccthstRepository.selectAllBccthst();
         for (BccthstRecord record: records) {
             CcTransaction ccTransaction = new CcTransaction();
             ccTransaction.setApprovalCode(record.getApprovalCode());
@@ -36,7 +39,7 @@ public class EtlTransactionService implements IEtlTransaction {
             ccTransaction.setMerchantId(null); // join dengan oaslog, get merchant id
             ccTransaction.setMerchantOrg(null); // join dengan oaslog, get merchant id
             ccTransaction.setChannel(null); //liat notes untuk dapetin channel
-            ccTransaction.setTerminalCode(null); // liat di oadc575
+            ccTransaction.setTerminalCode(null); // join oaslog
             ccTransaction.setTranAmount(ccTransaction.getTranAmount());
             ccTransaction.setTranCode(record.getTranCode());
             ccTransaction.setTranCodeDesc(null); // custom sendiri, liat di excel

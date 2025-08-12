@@ -1,15 +1,6 @@
-package rnd.etlloyalty.entities;
+package rnd.etlloyalty.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "cc_transaction")
-//@Table(name = "RND_CC_TRX")
-public class CcTransaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tableId;
-
+public class CcTransactionDto {
     private String approvalCode;
     private String tranCode;
     private String tranCodeDesc;
@@ -27,20 +18,12 @@ public class CcTransaction {
     private String merchantId;
     private String merchantCat;
 
-    public Long getTableId() {
-        return tableId;
-    }
-
-    public void setTableId(Long tableId) {
-        this.tableId = tableId;
-    }
-
     public String getApprovalCode() {
         return approvalCode;
     }
 
-    public void setApprovalCode(String approval_code) {
-        this.approvalCode = approval_code;
+    public void setApprovalCode(String approvalCode) {
+        this.approvalCode = approvalCode;
     }
 
     public String getTranCode() {

@@ -49,6 +49,28 @@ public class OaslogRecord {
     @Column(name = "OASA_MSTR_B090_ORG_MTI")
     private String mastercardOrigMti;
 
+    @Column(name = "OASA_B041_CRD_ACCPT_STORE")
+    private String terminalId1;
+    @Column(name = "OASA_B041_CRD_ACCPT_TERM")
+    private String terminalId2;
+
+
+    public String getTerminalId1() {
+        return terminalId1;
+    }
+
+    public void setTerminalId1(String terminalId1) {
+        this.terminalId1 = terminalId1;
+    }
+
+    public String getTerminalId2() {
+        return terminalId2;
+    }
+
+    public void setTerminalId2(String terminalId2) {
+        this.terminalId2 = terminalId2;
+    }
+
     public Long getTableId() {
         return tableId;
     }
