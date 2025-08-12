@@ -34,7 +34,7 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+.vscode/sss
 
 ### env file ###
-/src/main/resources/env.properties/
+/src/main/resources/env.properties
