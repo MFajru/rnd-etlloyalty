@@ -1,9 +1,9 @@
 package rnd.etlloyalty.repositories;
 
-import org.hibernate.mapping.Any;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import rnd.etlloyalty.dto.CcTransactionDto;
 import rnd.etlloyalty.entities.BccthstRecord;
 
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.List;
 public interface BccthstRepository extends JpaRepository<BccthstRecord, String> {
     @Query(value = "SELECT b.* FROM EPURSEPLUS.RND_CRDLNK_BCCTHST b", nativeQuery = true)
     List<BccthstRecord> selectAllBccthst();
-    // change query to left join semua table
     @Query(value = """
             SELECT b.THST_APPROVAL_CODE AS approvalCode, b.THST_ORG_NBR , b.THST_CARD_NBR AS cardNumber,
                     b.THST_TYPE AS cardType, b.THST_MERCH_CAT AS merchantCat, os.OASA_MERCHANT_ORG AS merchantOrg, os.OASA_MERCHANT_NBR AS merchantId,
@@ -46,5 +45,5 @@ public interface BccthstRepository extends JpaRepository<BccthstRecord, String> 
             LEFT JOIN RND_ODS_CRDLNK_OADCLOG o ON b.THST_APPROVAL_CODE = o.OADCL_APPROVAL_CODE;
             """,
             nativeQuery = true)
-    Any selectJoinBccthstOaslog();
+    List<CcTransactionDto> selectCcTransactions();
 }

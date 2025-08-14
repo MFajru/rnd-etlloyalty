@@ -3,8 +3,8 @@ package rnd.etlloyalty.entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cc_transaction")
-//@Table(name = "RND_CC_TRX")
+//@Table(name = "cc_transaction")
+@Table(name = "RND_CC_TRX")
 public class CcTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

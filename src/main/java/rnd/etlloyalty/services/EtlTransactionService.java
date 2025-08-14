@@ -1,60 +1,63 @@
 package rnd.etlloyalty.services;
 
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import rnd.etlloyalty.dto.CcTransactionDto;
 import rnd.etlloyalty.entities.BccthstRecord;
 import rnd.etlloyalty.entities.CcTransaction;
-import rnd.etlloyalty.interfaces.IEtlTransaction;
 import rnd.etlloyalty.repositories.BccthstRepository;
+import rnd.etlloyalty.repositories.CcTransactionRepository;
 import rnd.etlloyalty.repositories.OaslogRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EtlTransactionService implements IEtlTransaction {
+public class EtlTransactionService {
 
-    private  final BccthstRepository bccthstRepository;
-    private final OaslogRepository oaslogRepository;
+    private final static Logger logger = LoggerFactory.getLogger(EtlTransactionService.class);
 
-    public EtlTransactionService(BccthstRepository bccthstRepository, OaslogRepository oaslogRepository) {
+    private final BccthstRepository bccthstRepository;
+    private final CcTransactionRepository ccTransactionRepository;
+
+    public EtlTransactionService(BccthstRepository bccthstRepository, CcTransactionRepository ccTransactionRepository) {
         this.bccthstRepository = bccthstRepository;
-        this.oaslogRepository = oaslogRepository;
+        this.ccTransactionRepository = ccTransactionRepository;
     }
 
+    @Transactional
+    public void etlCcTransactions() {
+        logger.info("Start ETL CC Transaction Service");
+        List<CcTransactionDto> ccTransactions = bccthstRepository.selectCcTransactions();
+        List<CcTransaction> ccTrxs = new ArrayList<>();
 
-    @Override
-    public List<BccthstRecord> getBccthstRecords() {
-        // dapet list record yang baru masuk
-        // mapping ke model cc transaction
-        // insert ke db
-        // tinggal mikir gimana caranya function ini selalu jalan pas ada data baru masuk
-        List<BccthstRecord> records = bccthstRepository.selectAllBccthst();
-        for (BccthstRecord record: records) {
-            CcTransaction ccTransaction = new CcTransaction();
-            ccTransaction.setApprovalCode(record.getApprovalCode());
-            ccTransaction.setCardNumber(record.getCardNbr());
-            ccTransaction.setCardOrg(record.getOrgNbr());
-            ccTransaction.setCardType(record.getType());
-            ccTransaction.setMerchantCat(record.getMerchCat());
-            ccTransaction.setMerchantId(null); // join dengan oaslog, get merchant id
-            ccTransaction.setMerchantOrg(null); // join dengan oaslog, get merchant id
-            ccTransaction.setChannel(null); //liat notes untuk dapetin channel
-            ccTransaction.setTerminalCode(null); // join oaslog
-            ccTransaction.setTranAmount(ccTransaction.getTranAmount());
-            ccTransaction.setTranCode(record.getTranCode());
-            ccTransaction.setTranCodeDesc(null); // custom sendiri, liat di excel
-            ccTransaction.setTranFeature(null); // liat notes untuk buat sendiri
-            ccTransaction.setTranDate(record.getTranDate());
-            ccTransaction.setUtilCode(null); // liat BNLOG dan note untuk tau cara ambilnya
-            ccTransaction.setCountryCode(null); // join dengan oaslog
+        for (CcTransactionDto ccTran: ccTransactions) {
+            CcTransaction ccTrx = new CcTransaction();
+            ccTrx.setApprovalCode(ccTran.getApprovalCode());
+            ccTrx.setTranCode(ccTran.getTranCode());
+            ccTrx.setTranCodeDesc(ccTran.getTranCodeDesc());
+            ccTrx.setTranFeature(ccTran.getTranFeature());
+            ccTrx.setChannel(ccTran.getChannel());
+            ccTrx.setUtilCode(ccTran.getUtilCode());
+            ccTrx.setTranDate(ccTran.getTranDate());
+            ccTrx.setTranAmount(ccTran.getTranAmount());
+            ccTrx.setCardOrg(ccTran.getCardOrg());
+            ccTrx.setCardType(ccTran.getCardType());
+            ccTrx.setCardNumber(ccTran.getCardNumber());
+            ccTrx.setTerminalCode(ccTran.getTerminalCode());
+            ccTrx.setCountryCode(ccTran.getCountryCode());
+            ccTrx.setMerchantOrg(ccTran.getMerchantOrg());
+            ccTrx.setMerchantId(ccTran.getMerchantId());
+            ccTrx.setMerchantCat(ccTran.getMerchantCat());
+
+            ccTrxs.add(ccTrx);
         }
-        return bccthstRepository.findAll();
-    }
 
-    @Override
-    public BccthstRecord getBccthstRecord(String approvalCode) {
-        Optional<BccthstRecord> res = bccthstRepository.findById(approvalCode);
-        return res.orElse(null);
+        logger.info("Finish ETL CC Transaction Service");
+        return ;
 
     }
 }
