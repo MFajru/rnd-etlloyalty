@@ -1,5 +1,7 @@
 package rnd.etlloyalty.dto;
 
+import java.math.BigDecimal;
+
 public class CcTransactionDto {
     private String approvalCode;
     private String tranCode;
@@ -8,15 +10,34 @@ public class CcTransactionDto {
     private String channel;
     private String utilCode;
     private String tranDate;
-    private String tranAmount;
+    private BigDecimal tranAmount;
     private String cardOrg;
     private String cardType;
     private String cardNumber;
     private String countryCode;
-    private String terminalCode;
+    private String terminalId;
     private String merchantOrg;
     private String merchantId;
     private String merchantCat;
+
+    public CcTransactionDto(String approvalCode, String tranCode, String tranCodeDesc, String tranFeature, String channel, String utilCode, String tranDate, BigDecimal tranAmount, String cardOrg, String cardType, String cardNumber, String countryCode, String terminalId, String merchantOrg, String merchantId, String merchantCat) {
+        this.approvalCode = approvalCode;
+        this.tranCode = tranCode;
+        this.tranCodeDesc = tranCodeDesc;
+        this.tranFeature = tranFeature;
+        this.channel = channel;
+        this.utilCode = utilCode;
+        this.tranDate = tranDate;
+        this.tranAmount = tranAmount;
+        this.cardOrg = cardOrg;
+        this.cardType = cardType;
+        this.cardNumber = cardNumber;
+        this.countryCode = countryCode;
+        this.terminalId = terminalId;
+        this.merchantOrg = merchantOrg;
+        this.merchantId = merchantId;
+        this.merchantCat = merchantCat;
+    }
 
     public String getApprovalCode() {
         return approvalCode;
@@ -74,11 +95,11 @@ public class CcTransactionDto {
         this.tranDate = tranDate;
     }
 
-    public String getTranAmount() {
+    public BigDecimal getTranAmount() {
         return tranAmount;
     }
 
-    public void setTranAmount(String tranAmount) {
+    public void setTranAmount(BigDecimal tranAmount) {
         this.tranAmount = tranAmount;
     }
 
@@ -114,12 +135,12 @@ public class CcTransactionDto {
         this.countryCode = countryCode;
     }
 
-    public String getTerminalCode() {
-        return terminalCode;
+    public String getTerminalId() {
+        return terminalId;
     }
 
-    public void setTerminalCode(String terminalCode) {
-        this.terminalCode = terminalCode;
+    public void setTerminalId(String terminalId) {
+        this.terminalId = terminalId;
     }
 
     public String getMerchantOrg() {

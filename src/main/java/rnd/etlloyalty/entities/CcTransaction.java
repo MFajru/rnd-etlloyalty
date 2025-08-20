@@ -2,13 +2,15 @@ package rnd.etlloyalty.entities;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 //@Table(name = "cc_transaction")
 @Table(name = "RND_CC_TRX")
 public class CcTransaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tableId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String tableId;
 
     private String approvalCode;
     private String tranCode;
@@ -17,21 +19,21 @@ public class CcTransaction {
     private String channel;
     private String utilCode;
     private String tranDate;
-    private String tranAmount;
+    private BigDecimal tranAmount;
     private String cardOrg;
     private String cardType;
     private String cardNumber;
     private String countryCode;
-    private String terminalCode;
+    private String terminalId;
     private String merchantOrg;
     private String merchantId;
     private String merchantCat;
 
-    public Long getTableId() {
+    public String getTableId() {
         return tableId;
     }
 
-    public void setTableId(Long tableId) {
+    public void setTableId(String tableId) {
         this.tableId = tableId;
     }
 
@@ -91,11 +93,11 @@ public class CcTransaction {
         this.tranDate = tranDate;
     }
 
-    public String getTranAmount() {
+    public BigDecimal getTranAmount() {
         return tranAmount;
     }
 
-    public void setTranAmount(String tranAmount) {
+    public void setTranAmount(BigDecimal tranAmount) {
         this.tranAmount = tranAmount;
     }
 
@@ -131,12 +133,12 @@ public class CcTransaction {
         this.countryCode = countryCode;
     }
 
-    public String getTerminalCode() {
-        return terminalCode;
+    public String getTerminalId() {
+        return terminalId;
     }
 
-    public void setTerminalCode(String terminalCode) {
-        this.terminalCode = terminalCode;
+    public void setTerminalId(String terminalCode) {
+        this.terminalId = terminalCode;
     }
 
     public String getMerchantOrg() {
