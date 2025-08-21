@@ -33,6 +33,8 @@ public class EtlTransactionService {
         logger.info("Start ETL CC Transaction Service");
         List<CcTransactionDto> ccTransactions = bccthstRepository.selectCcTransactions();
         List<CcTransaction> ccTrxs = new ArrayList<>();
+        List<String> ccApprovalCodes = new ArrayList<>();
+        int i = 0;
 
         for (CcTransactionDto ccTran: ccTransactions) {
             CcTransaction ccTrx = new CcTransaction();
@@ -54,17 +56,20 @@ public class EtlTransactionService {
             ccTrx.setMerchantId(ccTran.getMerchantId());
             ccTrx.setMerchantCat(ccTran.getMerchantCat());
 
+            ccApprovalCodes.add(ccTran.getApprovalCode());
             ccTrxs.add(ccTrx);
-        }
 
-        for (int i = 0; i < ccTrxs.size(); i += BATCH_SIZE) {
-            List<CcTransaction> batch = ccTrxs.subList(i, Math.min(i + BATCH_SIZE, ccTrxs.size()));
-
-            try {
-                ccTransactionRepository.saveAll(batch);
-                logger.info("Successing added data to db in batch " + (i + BATCH_SIZE) / BATCH_SIZE);
-            } catch (DataAccessException e) {
-                logger.error("Database error occurred, transaction will be rolled back", e);
+            if (ccTrxs.size() >= BATCH_SIZE) {
+                try {
+                    ccTransactionRepository.saveAll(ccTrxs);
+                    logger.info("Successing added data to db in batch {}",  (i + ccTrxs.size() / BATCH_SIZE));
+                } catch (DataAccessException e) {
+                    logger.error("Database error occurred, transaction will be rolled back", e);
+                } finally {
+                    ccTrxs.clear();
+                    ccApprovalCodes.clear();
+                    i += 1;
+                }
             }
         }
 

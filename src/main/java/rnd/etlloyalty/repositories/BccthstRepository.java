@@ -2,6 +2,7 @@ package rnd.etlloyalty.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import rnd.etlloyalty.dto.CcTransactionDto;
 import rnd.etlloyalty.entities.BccthstRecord;
@@ -47,4 +48,5 @@ public interface BccthstRepository extends JpaRepository<BccthstRecord, String> 
             """,
             nativeQuery = true)
     List<CcTransactionDto> selectCcTransactions();
+
 }
