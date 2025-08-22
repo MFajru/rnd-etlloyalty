@@ -32,11 +32,15 @@ public class EtlTransactionService {
         logger.info("Start ETL CC Transaction Service");
         long countCcTranData = ccTransactionRepository.count();
 
-        List<CcTransactionDto> ccTransactions = bccthstRepository.selectCcTransactions();
+        List<CcTransactionDto> ccTrxsDto = bccthstRepository.selectCcTransactions();
+        if (ccTrxsDto.isEmpty()) {
+            logger.error("Transaction data is empty");
+            return;
+        }
         List<CcTransaction> ccTrxs = new ArrayList<>();
         int i = 0;
 
-        for (CcTransactionDto ccTran: ccTransactions) {
+        for (CcTransactionDto ccTran: ccTrxsDto) {
             CcTransaction ccTrx = new CcTransaction();
             ccTrx.setTableId(String.format(ccTran.getApprovalCode() + ccTran.getTranCode()));
             ccTrx.setApprovalCode(ccTran.getApprovalCode());
