@@ -3,13 +3,14 @@ package rnd.etlloyalty.entities;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 //@Table(name = "cc_transaction")
 @Table(name = "RND_CC_TRX")
 public class CcTransaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String tableId;
 
     private String approvalCode;
@@ -28,6 +29,11 @@ public class CcTransaction {
     private String merchantOrg;
     private String merchantId;
     private String merchantCat;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
+
 
     public String getTableId() {
         return tableId;
@@ -164,4 +170,39 @@ public class CcTransaction {
     public void setMerchantCat(String merchantCat) {
         this.merchantCat = merchantCat;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    //    @Override
+//    public boolean equals(Object o) {
+//        // 1. Check if they are the exact same object in memory
+//        if (this == o) return true;
+//        // 2. Check if the other object is null or a different class
+//        if (o == null || getClass() != o.getClass()) return false;
+//        // 3. Cast the object to your class type
+//        CcTransaction that = (CcTransaction) o;
+//        // 4. The rule for equality: they are equal if their approval codes are the same.
+//        // We also check that approvalCode is not null to avoid errors.
+//        return approvalCode != null && approvalCode.equals(that.approvalCode);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        // The hash code must be based on the same field(s) used in equals().
+//        return Objects.hash(approvalCode);
+//    }
 }

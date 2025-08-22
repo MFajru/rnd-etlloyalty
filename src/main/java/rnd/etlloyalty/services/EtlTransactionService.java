@@ -10,13 +10,12 @@ import rnd.etlloyalty.entities.CcTransaction;
 import rnd.etlloyalty.repositories.BccthstRepository;
 import rnd.etlloyalty.repositories.CcTransactionRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EtlTransactionService {
     int BATCH_SIZE = 100;
+    int LIMIT = 100;
 
     private final static Logger logger = LoggerFactory.getLogger(EtlTransactionService.class);
 
@@ -31,14 +30,15 @@ public class EtlTransactionService {
     @Transactional
     public void etlCcTransactions() {
         logger.info("Start ETL CC Transaction Service");
+        long countCcTranData = ccTransactionRepository.count();
+
         List<CcTransactionDto> ccTransactions = bccthstRepository.selectCcTransactions();
         List<CcTransaction> ccTrxs = new ArrayList<>();
-        List<String> ccApprovalCodes = new ArrayList<>();
         int i = 0;
 
         for (CcTransactionDto ccTran: ccTransactions) {
             CcTransaction ccTrx = new CcTransaction();
-
+            ccTrx.setTableId(String.format(ccTran.getApprovalCode() + ccTran.getTranCode()));
             ccTrx.setApprovalCode(ccTran.getApprovalCode());
             ccTrx.setTranCode(ccTran.getTranCode());
             ccTrx.setTranCodeDesc(ccTran.getTranCodeDesc());
@@ -56,10 +56,10 @@ public class EtlTransactionService {
             ccTrx.setMerchantId(ccTran.getMerchantId());
             ccTrx.setMerchantCat(ccTran.getMerchantCat());
 
-            ccApprovalCodes.add(ccTran.getApprovalCode());
             ccTrxs.add(ccTrx);
 
             if (ccTrxs.size() >= BATCH_SIZE) {
+
                 try {
                     ccTransactionRepository.saveAll(ccTrxs);
                     logger.info("Successing added data to db in batch {}",  (i + ccTrxs.size() / BATCH_SIZE));
@@ -67,12 +67,10 @@ public class EtlTransactionService {
                     logger.error("Database error occurred, transaction will be rolled back", e);
                 } finally {
                     ccTrxs.clear();
-                    ccApprovalCodes.clear();
                     i += 1;
                 }
             }
         }
-
         logger.info("Finish ETL CC Transaction Service");
     }
 }
