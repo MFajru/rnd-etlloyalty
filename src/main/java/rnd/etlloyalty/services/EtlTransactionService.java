@@ -30,16 +30,32 @@ public class EtlTransactionService {
     @Transactional
     public void etlCcTransactions() {
         logger.info("Start ETL CC Transaction Service");
-        long countCcTranData = ccTransactionRepository.count();
 
         List<CcTransactionDto> ccTrxsDto = bccthstRepository.selectCcTransactions();
         if (ccTrxsDto.isEmpty()) {
-            logger.error("Transaction data is empty");
+            logger.error("CC Transaction data is empty");
             return;
         }
-        List<CcTransaction> ccTrxs = new ArrayList<>();
-        int i = 0;
 
+        List<String> existingApprovalCodes = ccTransactionRepository.selectApprovalCodesWhereDateMinus1();
+        int j = ccTrxsDto.size() - 1;
+        if (!existingApprovalCodes.isEmpty()) {
+            for (String existingApprovalCode : existingApprovalCodes) {
+                while (j > 0){
+                    if (Integer.parseInt(ccTrxsDto.get(j).getApprovalCode()) > Integer.parseInt(existingApprovalCode)) {
+                        break;
+                    }
+                    if (Objects.equals(existingApprovalCode, ccTrxsDto.get(j).getApprovalCode())) {
+                        ccTrxsDto.remove(j);
+                    }
+                    j -= 1;
+
+                }
+            }
+        }
+
+        List<CcTransaction> ccTrxs = new ArrayList<>();
+        int batch = 0;
         for (CcTransactionDto ccTran: ccTrxsDto) {
             CcTransaction ccTrx = new CcTransaction();
             ccTrx.setTableId(String.format(ccTran.getApprovalCode() + ccTran.getTranCode()));
@@ -60,21 +76,19 @@ public class EtlTransactionService {
             ccTrx.setMerchantId(ccTran.getMerchantId());
             ccTrx.setMerchantCat(ccTran.getMerchantCat());
 
-            ccTrxs.add(ccTrx);
-
             if (ccTrxs.size() >= BATCH_SIZE) {
-
                 try {
                     ccTransactionRepository.saveAll(ccTrxs);
-                    logger.info("Successing added data to db in batch {}",  (i + ccTrxs.size() / BATCH_SIZE));
+                    logger.info("Successing added data to db in batch {}",  (batch + ccTrxs.size() / BATCH_SIZE));
                 } catch (DataAccessException e) {
                     logger.error("Database error occurred, transaction will be rolled back", e);
                 } finally {
                     ccTrxs.clear();
-                    i += 1;
+                    batch += 1;
                 }
             }
         }
+
         logger.info("Finish ETL CC Transaction Service");
     }
 }

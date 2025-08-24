@@ -32,4 +32,12 @@ public interface CcTransactionRepository extends JpaRepository<CcTransaction, St
             """,
             nativeQuery = true)
     Set<CcTransaction> selectLimitOffset(@Param("limit") Integer limit, @Param("offset") Integer offset);
+
+    @Query(value = """
+            SELECT cc.APPROVAL_CODE, cc.TRAN_CODE FROM RND_CC_TRX cc
+            WHERE cc.TRAN_DATE = TO_CHAR(TRUNC(SYSDATE) - 1, 'DDMMYYYY')
+            ORDER BY cc.APPROVAl_CODE ASC
+            """,
+            nativeQuery = true)
+    List<String> selectApprovalCodesWhereDateMinus1();
 }
