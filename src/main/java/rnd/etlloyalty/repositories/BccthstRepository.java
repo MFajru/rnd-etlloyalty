@@ -46,7 +46,7 @@ public interface BccthstRepository extends JpaRepository<BccthstRecord, String> 
             LEFT JOIN RND_ODS_CRDLNK_BNLOG_ATM bn ON b.THST_APPROVAL_CODE = bn.BNICA_F038_AUTH_CDE
             LEFT JOIN RND_ODS_CRDLNK_OADCLOG o ON b.THST_APPROVAL_CODE = o.OADCL_APPROVAL_CODE
             WHERE b.THST_TRAN_DATE = TO_CHAR(TRUNC(SYSDATE) - 1, 'DDMMYYYY')
-            ORDER BY b.THSTTHST_APPROVAL_CODE DESC
+            ORDER BY b.THST_APPROVAL_CODE DESC
             """,
             nativeQuery = true)
     List<CcTransactionDto> selectCcTransactions();
