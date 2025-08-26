@@ -34,7 +34,6 @@ public class EtlTransactionService {
         List<CcTransactionDto> ccTrxsDto = bccthstRepository.selectCcTransactions();
         if (ccTrxsDto.isEmpty()) {
             logger.error("CC Transaction data is empty");
-            return;
         }
 
         List<String> existingApprovalCodes = ccTransactionRepository.selectApprovalCodesWhereDateMinus1();
@@ -56,34 +55,37 @@ public class EtlTransactionService {
 
         List<CcTransaction> ccTrxs = new ArrayList<>();
         int batch = 0;
-        for (CcTransactionDto ccTran: ccTrxsDto) {
+        for (int i = 0; i < ccTrxsDto.size(); i++) {
             CcTransaction ccTrx = new CcTransaction();
-            ccTrx.setTableId(String.format(ccTran.getApprovalCode() + ccTran.getTranCode()));
-            ccTrx.setApprovalCode(ccTran.getApprovalCode());
-            ccTrx.setTranCode(ccTran.getTranCode());
-            ccTrx.setTranCodeDesc(ccTran.getTranCodeDesc());
-            ccTrx.setTranFeature(ccTran.getTranFeature());
-            ccTrx.setChannel(ccTran.getChannel());
-            ccTrx.setUtilCode(ccTran.getUtilCode());
-            ccTrx.setTranDate(ccTran.getTranDate());
-            ccTrx.setTranAmount(ccTran.getTranAmount());
-            ccTrx.setCardOrg(ccTran.getCardOrg());
-            ccTrx.setCardType(ccTran.getCardType());
-            ccTrx.setCardNumber(ccTran.getCardNumber());
-            ccTrx.setTerminalId(ccTran.getTerminalId());
-            ccTrx.setCountryCode(ccTran.getCountryCode());
-            ccTrx.setMerchantOrg(ccTran.getMerchantOrg());
-            ccTrx.setMerchantId(ccTran.getMerchantId());
-            ccTrx.setMerchantCat(ccTran.getMerchantCat());
+            ccTrx.setTableId(String.format(ccTrxsDto.get(i).getApprovalCode() + ccTrxsDto.get(i).getTranCode()));
+            ccTrx.setApprovalCode(ccTrxsDto.get(i).getApprovalCode());
+            ccTrx.setTranCode(ccTrxsDto.get(i).getTranCode());
+            ccTrx.setTranCodeDesc(ccTrxsDto.get(i).getTranCodeDesc());
+            ccTrx.setTranFeature(ccTrxsDto.get(i).getTranFeature());
+            ccTrx.setChannel(ccTrxsDto.get(i).getChannel());
+            ccTrx.setUtilCode(ccTrxsDto.get(i).getUtilCode());
+            ccTrx.setTranDate(ccTrxsDto.get(i).getTranDate());
+            ccTrx.setTranAmount(ccTrxsDto.get(i).getTranAmount());
+            ccTrx.setCardOrg(ccTrxsDto.get(i).getCardOrg());
+            ccTrx.setCardType(ccTrxsDto.get(i).getCardType());
+            ccTrx.setCardNumber(ccTrxsDto.get(i).getCardNumber());
+            ccTrx.setTerminalId(ccTrxsDto.get(i).getTerminalId());
+            ccTrx.setCountryCode(ccTrxsDto.get(i).getCountryCode());
+            ccTrx.setMerchantOrg(ccTrxsDto.get(i).getMerchantOrg());
+            ccTrx.setMerchantId(ccTrxsDto.get(i).getMerchantId());
+            ccTrx.setMerchantCat(ccTrxsDto.get(i).getMerchantCat());
 
-            if (ccTrxs.size() >= BATCH_SIZE) {
+            ccTrxs.add(ccTrx);
+
+            if (ccTrxs.size() >= BATCH_SIZE || i >= ccTrxsDto.size()-1) {
                 try {
                     ccTransactionRepository.saveAll(ccTrxs);
-                    logger.info("Successing added data to db in batch {}",  (batch + ccTrxs.size() / BATCH_SIZE));
+                    logger.info("Successing added data to db in batch {}",  (i / BATCH_SIZE) + 1);
                 } catch (DataAccessException e) {
                     logger.error("Database error occurred, transaction will be rolled back", e);
                 } finally {
                     ccTrxs.clear();
+                    existingApprovalCodes.clear();
                     batch += 1;
                 }
             }

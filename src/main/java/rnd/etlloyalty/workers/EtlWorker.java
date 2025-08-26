@@ -26,8 +26,9 @@ public class EtlWorker implements CommandLineRunner {
         etlTransactionService.etlCcTransactions();
         logger.info("ETL WORKER FINISHED");
 
+        // MAKE WORKER TO RUN AT 00:00 AM (SCHEDULAR)
         // EXIT PROGRAM WHEN FINISHED
-        int exitCode = SpringApplication.exit(appContext, ()-> 0);
-        System.exit(exitCode);
+//        int exitCode = SpringApplication.exit(appContext, ()-> 0);
+//        System.exit(exitCode);
     }
 }
