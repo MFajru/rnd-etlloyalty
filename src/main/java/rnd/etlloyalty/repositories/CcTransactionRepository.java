@@ -3,11 +3,13 @@ package rnd.etlloyalty.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import rnd.etlloyalty.entities.CcTransaction;
 
 import java.util.List;
 import java.util.Set;
 
+@Repository
 public interface CcTransactionRepository extends JpaRepository<CcTransaction, String> {
     @Query(value = """
             SELECT cc.APPROVAL_CODE FROM RND_CC_TRX cc

@@ -7,8 +7,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import rnd.etlloyalty.dto.CcTransactionDto;
 import rnd.etlloyalty.entities.CcTransaction;
+import rnd.etlloyalty.entities.EtlRunningLog;
 import rnd.etlloyalty.repositories.BccthstRepository;
 import rnd.etlloyalty.repositories.CcTransactionRepository;
+import rnd.etlloyalty.repositories.EtlRunningLogRepository;
 
 import java.util.*;
 
@@ -21,19 +23,26 @@ public class EtlTransactionService {
 
     private final BccthstRepository bccthstRepository;
     private final CcTransactionRepository ccTransactionRepository;
+    private final EtlRunningLogRepository etlRunningLogRepository;
 
-    public EtlTransactionService(BccthstRepository bccthstRepository, CcTransactionRepository ccTransactionRepository) {
+    public EtlTransactionService(BccthstRepository bccthstRepository, CcTransactionRepository ccTransactionRepository, EtlRunningLogRepository etlRunningLogRepository) {
         this.bccthstRepository = bccthstRepository;
         this.ccTransactionRepository = ccTransactionRepository;
+        this.etlRunningLogRepository = etlRunningLogRepository;
     }
 
     @Transactional
     public void etlCcTransactions() {
         logger.info("Start ETL CC Transaction Service");
+        int successAmt = 0;
+        int failedAmt = 0;
+        EtlRunningLog etlRunningLog = new EtlRunningLog();
+        etlRunningLog.setEtlStartTimestamp(etlRunningLogRepository.getDbDateTime());
 
         List<CcTransactionDto> ccTrxsDto = bccthstRepository.selectCcTransactions();
         if (ccTrxsDto.isEmpty()) {
-            logger.error("CC Transaction data is empty");
+            logger.warn("CC Transaction data is empty");
+            etlRunningLog.setEtlFinishTimestamp(etlRunningLogRepository.getDbDateTime());
         }
 
         List<String> existingApprovalCodes = ccTransactionRepository.selectApprovalCodesWhereDateMinus1();
@@ -52,6 +61,8 @@ public class EtlTransactionService {
                 }
             }
         }
+
+        etlRunningLog.setEtlDataAmt(ccTrxsDto.size());
 
         List<CcTransaction> ccTrxs = new ArrayList<>();
         int batch = 0;
@@ -80,8 +91,10 @@ public class EtlTransactionService {
             if (ccTrxs.size() >= BATCH_SIZE || i >= ccTrxsDto.size()-1) {
                 try {
                     ccTransactionRepository.saveAll(ccTrxs);
+                    successAmt += ccTrxs.size();
                     logger.info("Successing added data to db in batch {}",  (i / BATCH_SIZE) + 1);
                 } catch (DataAccessException e) {
+                    failedAmt += ccTrxs.size();
                     logger.error("Database error occurred, transaction will be rolled back", e);
                 } finally {
                     ccTrxs.clear();
@@ -90,6 +103,11 @@ public class EtlTransactionService {
                 }
             }
         }
+
+        etlRunningLog.setEtlSuccessAmt(successAmt);
+        etlRunningLog.setEtlFailedAmt(failedAmt);
+        etlRunningLog.setEtlFinishTimestamp(etlRunningLogRepository.getDbDateTime());
+        etlRunningLogRepository.save(etlRunningLog);
 
         logger.info("Finish ETL CC Transaction Service");
     }
