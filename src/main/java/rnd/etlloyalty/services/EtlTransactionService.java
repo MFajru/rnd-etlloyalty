@@ -67,25 +67,7 @@ public class EtlTransactionService {
         List<CcTransaction> ccTrxs = new ArrayList<>();
         int batch = 0;
         for (int i = 0; i < ccTrxsDto.size(); i++) {
-            CcTransaction ccTrx = new CcTransaction();
-            ccTrx.setTableId(String.format(ccTrxsDto.get(i).getApprovalCode() + ccTrxsDto.get(i).getTranCode()));
-            ccTrx.setApprovalCode(ccTrxsDto.get(i).getApprovalCode());
-            ccTrx.setTranCode(ccTrxsDto.get(i).getTranCode());
-            ccTrx.setTranCodeDesc(ccTrxsDto.get(i).getTranCodeDesc());
-            ccTrx.setTranFeature(ccTrxsDto.get(i).getTranFeature());
-            ccTrx.setChannel(ccTrxsDto.get(i).getChannel());
-            ccTrx.setUtilCode(ccTrxsDto.get(i).getUtilCode());
-            ccTrx.setTranDate(ccTrxsDto.get(i).getTranDate());
-            ccTrx.setTranAmount(ccTrxsDto.get(i).getTranAmount());
-            ccTrx.setCardOrg(ccTrxsDto.get(i).getCardOrg());
-            ccTrx.setCardType(ccTrxsDto.get(i).getCardType());
-            ccTrx.setCardNumber(ccTrxsDto.get(i).getCardNumber());
-            ccTrx.setTerminalId(ccTrxsDto.get(i).getTerminalId());
-            ccTrx.setCountryCode(ccTrxsDto.get(i).getCountryCode());
-            ccTrx.setMerchantOrg(ccTrxsDto.get(i).getMerchantOrg());
-            ccTrx.setMerchantId(ccTrxsDto.get(i).getMerchantId());
-            ccTrx.setMerchantCat(ccTrxsDto.get(i).getMerchantCat());
-
+            CcTransaction ccTrx = getCcTrx(ccTrxsDto, i);
             ccTrxs.add(ccTrx);
 
             if (ccTrxs.size() >= BATCH_SIZE || i >= ccTrxsDto.size()-1) {
@@ -110,5 +92,27 @@ public class EtlTransactionService {
         etlRunningLogRepository.save(etlRunningLog);
 
         logger.info("Finish ETL CC Transaction Service");
+    }
+
+    private static CcTransaction getCcTrx(List<CcTransactionDto> ccTrxsDto, int i) {
+        CcTransaction ccTrx = new CcTransaction();
+        ccTrx.setTableId(String.format(ccTrxsDto.get(i).getApprovalCode() + ccTrxsDto.get(i).getTranCode()));
+        ccTrx.setApprovalCode(ccTrxsDto.get(i).getApprovalCode());
+        ccTrx.setTranCode(ccTrxsDto.get(i).getTranCode());
+        ccTrx.setTranCodeDesc(ccTrxsDto.get(i).getTranCodeDesc());
+        ccTrx.setTranFeature(ccTrxsDto.get(i).getTranFeature());
+        ccTrx.setChannel(ccTrxsDto.get(i).getChannel());
+        ccTrx.setUtilCode(ccTrxsDto.get(i).getUtilCode());
+        ccTrx.setTranDate(ccTrxsDto.get(i).getTranDate());
+        ccTrx.setTranAmount(ccTrxsDto.get(i).getTranAmount());
+        ccTrx.setCardOrg(ccTrxsDto.get(i).getCardOrg());
+        ccTrx.setCardType(ccTrxsDto.get(i).getCardType());
+        ccTrx.setCardNumber(ccTrxsDto.get(i).getCardNumber());
+        ccTrx.setTerminalId(ccTrxsDto.get(i).getTerminalId());
+        ccTrx.setCountryCode(ccTrxsDto.get(i).getCountryCode());
+        ccTrx.setMerchantOrg(ccTrxsDto.get(i).getMerchantOrg());
+        ccTrx.setMerchantId(ccTrxsDto.get(i).getMerchantId());
+        ccTrx.setMerchantCat(ccTrxsDto.get(i).getMerchantCat());
+        return ccTrx;
     }
 }
